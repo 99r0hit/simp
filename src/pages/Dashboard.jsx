@@ -14,7 +14,7 @@ function Dashboard() {
       else setUser(user)
     })
 
-    fetch("https://your-backend.onrender.com/semiconductor-info")
+    fetch("https://simp-bk.onrender.com/semiconductor-info")
       .then(res => res.json())
       .then(data => setText(data.text))
   }, [])
