@@ -25,7 +25,7 @@ function Dashboard() {
   }
 
   const submitFeedback = async () => {
-    const res = await fetch("https://simp-bk.onrender.com/semiconductor-info", {
+    const res = await fetch("https://simp-bk.onrender.com/feedback", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
