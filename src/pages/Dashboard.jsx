@@ -5,25 +5,18 @@ import { useNavigate } from 'react-router-dom'
 function Dashboard() {
   const [user, setUser] = useState(null)
   const [text, setText] = useState('')
+  const [feedback, setFeedback] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Check logged in user
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) navigate('/')
       else setUser(user)
     })
 
-    // Fetch text from backend
-    fetch("https://simp-bk.onrender.com/semiconductor-info")
+    fetch("https://your-backend.onrender.com/semiconductor-info")
       .then(res => res.json())
-      .then(data => {
-        setText(data.text)
-      })
-      .catch(err => {
-        console.error("Backend error:", err)
-        setText("Could not fetch semiconductor info 😢")
-      })
+      .then(data => setText(data.text))
   }, [])
 
   const logout = async () => {
@@ -31,10 +24,42 @@ function Dashboard() {
     navigate('/')
   }
 
+  const submitFeedback = async () => {
+    const res = await fetch("https://simp-bk.onrender.com/semiconductor-info", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        user_email: user.email,
+        message: feedback
+      })
+    })
+
+    const data = await res.json()
+    if (data.status === "success") {
+      alert("Thanks for your feedback! 🎉")
+      setFeedback('')
+    } else {
+      alert("Something went wrong 😢")
+    }
+  }
+
   return (
     <div>
       <h2>Welcome, {user?.email}</h2>
       <p>{text}</p>
+
+      <h3>📝 Leave Feedback</h3>
+      <textarea
+        placeholder="Your thoughts on semiconductors..."
+        value={feedback}
+        onChange={e => setFeedback(e.target.value)}
+      ></textarea>
+      <br />
+      <button onClick={submitFeedback}>Submit Feedback</button>
+
+      <br /><br />
       <button onClick={logout}>Logout</button>
     </div>
   )
